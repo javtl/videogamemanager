@@ -4,9 +4,11 @@ import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class GameServiceImpl implements GameService {
 
     @Autowired

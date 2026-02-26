@@ -11,10 +11,10 @@ import java.util.List;
 @RequestMapping("/api/games")
 public class GameController {
 
-
+    @Autowired
     private GameService gameService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Game> getAll(){
         return gameService.getAllGames();
     }
