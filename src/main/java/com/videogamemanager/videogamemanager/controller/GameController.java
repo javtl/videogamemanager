@@ -3,6 +3,7 @@ package com.videogamemanager.videogamemanager.controller;
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,8 +12,11 @@ import java.util.List;
 @RequestMapping("/api/games")
 public class GameController {
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
+
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @GetMapping("/all")
     public List<Game> getAll(){
@@ -22,5 +26,11 @@ public class GameController {
     @PostMapping
     public Game saveGame(@RequestBody Game game){
         return gameService.saveGame(game);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        GameService.deleteGame(id);
+        return ResponseEntity.ok("Videojuego eliminado con éxito.");
     }
 }

@@ -1,9 +1,9 @@
 package com.videogamemanager.videogamemanager.services.impl;
 
+import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +11,12 @@ import java.util.List;
 @Service
 public class GameServiceImpl implements GameService {
 
-    @Autowired
-    private GameRepository repository;
+    private final GameRepository repository;
+
+
+    public GameServiceImpl(GameRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Game> getAllGames() {
@@ -21,9 +25,16 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game saveGame(Game game) {
-        if (game == null){
-            throw new RuntimeException("El juego no puede venir vacio.");
+        if (game == null || game.getTitle() == null || game.getTitle().isEmpty()) {
+            throw new InvalidGameException("El juego no puede venir vacío o sin título.");
         }
         return repository.save(game);
-}
+    }
+        // con @Override me da ERROR bombilla roja
+    public void deleteGame(String id) {
+        if (!repository.existsById(id)) {
+            throw new InvalidGameException("No se encontró el juego con ID: " + id);
+        }
+        repository.deleteById(id);
+    }
 }
