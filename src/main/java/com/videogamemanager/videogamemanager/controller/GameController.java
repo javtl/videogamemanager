@@ -2,17 +2,17 @@ package com.videogamemanager.videogamemanager.controller;
 
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.services.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/games")
+@RequiredArgsConstructor
 public class GameController {
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
 
     @GetMapping("/all")
     public List<Game> getAll(){
