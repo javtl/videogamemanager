@@ -14,7 +14,5 @@ public interface GameService {
     List<Game> getAllGames();
 
     Game saveGame(Game game);
-
-
 }
 

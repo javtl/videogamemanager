@@ -4,19 +4,17 @@ import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 
+
     private final GameRepository repository;
-
-
-    public GameServiceImpl(GameRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Game> getAllGames() {
