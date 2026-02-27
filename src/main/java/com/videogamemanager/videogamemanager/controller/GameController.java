@@ -1,8 +1,9 @@
 package com.videogamemanager.videogamemanager.controller;
 
-import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.services.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,18 +16,25 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping("/all")
-    public List<Game> getAll(){
+    public List<GameDto> getAll(){
         return gameService.getAllGames();
     }
 
     @PostMapping
-    public Game saveGame(@RequestBody Game game){
+    public GameDto saveGame(@RequestBody GameDto game){
         return gameService.saveGame(game);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        GameService.deleteGame(id);
+    public ResponseEntity<String> deleteGame(@PathVariable String id) {
+        gameService.deleteGame(id);
         return ResponseEntity.ok("Videojuego eliminado con éxito.");
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GameDto> updateGame(@PathVariable String id, @RequestBody GameDto game){
+        return ResponseEntity.ok(gameService.updateGame(id, game));
+    }
 }
+
+
