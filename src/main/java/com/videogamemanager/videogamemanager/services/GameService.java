@@ -16,7 +16,8 @@ public interface GameService {
 
     GameDto updateGame(String id, GameDto game);
 
-    List<Game> findByGenre(String genre);
-    List<Game> findByTitle(String title);
+    List<GameDto> findByGenre(String genre);
+
+    List<GameDto> findByTitle(String title);
 }
 
