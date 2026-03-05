@@ -2,6 +2,7 @@ package com.videogamemanager.videogamemanager.controller;
 
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.services.GameService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/games")
 @RequiredArgsConstructor
+@Tag(name = "Videojuegos", description = "Operaciones para gestionar el catálogo de juegos")
 public class GameController {
 
     private final GameService gameService;

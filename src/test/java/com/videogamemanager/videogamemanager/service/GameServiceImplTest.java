@@ -1,0 +1,125 @@
+package com.videogamemanager.videogamemanager.service;
+
+import com.videogamemanager.videogamemanager.mapper.GameMapper;
+import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.repository.GameRepository;
+import com.videogamemanager.videogamemanager.services.impl.GameServiceImpl;
+import com.videogamemanager.videogamemanager.exceptions.InvalidGameException; // Ajusta a tu paquete de excepciones
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class GameServiceImplTest {
+
+    @Mock
+    private GameRepository repository;
+    @Mock
+    private GameMapper mapper;
+
+    @InjectMocks
+    private GameServiceImpl gameService;
+
+    private Game game;
+    private GameDto gameDto;
+
+    @BeforeEach
+    void setUp() {
+        game = new Game();
+        game.setId("1");
+        game.setTitle("Zelda");
+
+        gameDto = new GameDto();
+        gameDto.setTitle("Zelda");
+    }
+
+    @Test
+    void getAllGames_ShouldReturnList() {
+        when(repository.findAll()).thenReturn(List.of(game));
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        List<GameDto> result = gameService.getAllGames();
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void saveGame_Success() {
+        when(mapper.toEntity(any())).thenReturn(game);
+        when(repository.save(any())).thenReturn(game);
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        GameDto saved = gameService.saveGame(gameDto);
+
+        assertNotNull(saved);
+        assertEquals("Zelda", saved.getTitle());
+    }
+
+    @Test
+    void saveGame_ThrowsException_WhenTitleEmpty() {
+        gameDto.setTitle("");
+        assertThrows(InvalidGameException.class, () -> gameService.saveGame(gameDto));
+    }
+
+    @Test
+    void updateGame_Success() {
+        when(repository.findById("1")).thenReturn(Optional.of(game));
+        when(repository.save(any())).thenReturn(game);
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        GameDto updated = gameService.updateGame("1", gameDto);
+
+        assertNotNull(updated);
+        verify(mapper).updateEntityFromDto(any(), any());
+    }
+
+    @Test
+    void updateGame_ThrowsException_NotFound() {
+        when(repository.findById("2")).thenReturn(Optional.empty());
+        assertThrows(InvalidGameException.class, () -> gameService.updateGame("2", gameDto));
+    }
+
+    @Test
+    void deleteGame_Success() {
+        when(repository.existsById("1")).thenReturn(true);
+        gameService.deleteGame("1");
+        verify(repository).deleteById("1");
+    }
+
+    @Test
+    void deleteGame_ThrowsException_NotFound() {
+        when(repository.existsById("2")).thenReturn(false);
+        assertThrows(InvalidGameException.class, () -> gameService.deleteGame("2"));
+    }
+
+    @Test
+    void findByGenre_ShouldReturnList() {
+        when(repository.findByGenreIgnoreCase("Aventura")).thenReturn(List.of(game));
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        List<GameDto> result = gameService.findByGenre("Aventura");
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void findByTitle_ShouldReturnList() {
+        when(repository.findByTitleContainingIgnoreCase("Zelda")).thenReturn(List.of(game));
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        List<GameDto> result = gameService.findByTitle("Zelda");
+        assertFalse(result.isEmpty());
+    }
+}
