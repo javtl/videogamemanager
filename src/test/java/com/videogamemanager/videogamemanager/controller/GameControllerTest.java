@@ -37,8 +37,11 @@ class GameControllerTest {
     @BeforeEach
     void setUp() {
         gameDto = new GameDto();
-        gameDto.setTitle("Mario");
+        gameDto.setTitle("Mario Bros");
         gameDto.setGenre("Adventure");
+        gameDto.setReleaseYear(1985);
+        gameDto.setAge(3);
+        gameDto.setCompleted(true);
     }
 
     @Test
@@ -47,7 +50,7 @@ class GameControllerTest {
 
         mockMvc.perform(get("/api/games/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Mario"));
+                .andExpect(jsonPath("$[0].title").value("Mario Bros"));
     }
 
     @Test
@@ -58,7 +61,7 @@ class GameControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(gameDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value("Mario"));
+                .andExpect(jsonPath("$.title").value("Mario Bros"));
     }
 
     @Test
@@ -72,12 +75,12 @@ class GameControllerTest {
 
     @Test
     void getByTitle_ShouldReturnList() throws Exception {
-        when(gameService.findByTitle("Mario")).thenReturn(List.of(gameDto));
+        when(gameService.findByTitle(anyString())).thenReturn(List.of(gameDto));
 
         mockMvc.perform(get("/api/games/title")
                         .param("title", "Mario"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Mario"));
+                .andExpect(jsonPath("$[0].title").value("Mario Bros")); // El valor real que devuelve el DTO
     }
 
     @Test
@@ -101,6 +104,17 @@ class GameControllerTest {
                         .contentType(MediaType.APPLICATION_JSON) // Decimos que enviamos un JSON
                         .content(objectMapper.writeValueAsString(gameDto))) // Convertimos el objeto a JSON
                 .andExpect(status().isOk()) // Esperamos un 200 OK
-                .andExpect(jsonPath("$.title").value("Mario")); // Verificamos que el JSON de vuelta es correcto
+                .andExpect(jsonPath("$.title").value("Mario Bros")); // Verificamos que el JSON de vuelta es correcto
+    }
+
+    @Test
+    void saveGame_ShouldReturnBadRequest_WhenTitleIsTooShort() throws Exception {
+        gameDto.setTitle("A"); // Solo 1 caracter, fallará @Size(min=2)
+
+        mockMvc.perform(post("/api/games")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(gameDto)))
+                .andExpect(status().isBadRequest()) // Esperamos un 400
+                .andExpect(jsonPath("$.error").value("Error de Validación")); // Verificamos nuestro GlobalExceptionHandler
     }
 }
