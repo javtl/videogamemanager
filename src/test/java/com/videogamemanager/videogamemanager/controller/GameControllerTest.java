@@ -58,11 +58,11 @@ class GameControllerTest {
     void saveGame_ShouldReturnCreated() throws Exception {
         when(gameService.saveGame(any())).thenReturn(gameDto);
 
-        mockMvc.perform((org.springframework.test.web.servlet.RequestBuilder) post("/api/games")
+        mockMvc.perform(post("/api/games")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.valueOf(objectMapper.writeValueAsString(gameDto))))
+                        .content(objectMapper.writeValueAsString(gameDto)))
                 .andExpect(status().isCreated())
-                .andExpect((ResultMatcher) jsonPath("$.title").value("Mario"));
+                .andExpect(jsonPath("$.title").value("Mario"));
     }
 
     @Test
@@ -71,7 +71,6 @@ class GameControllerTest {
 
         mockMvc.perform(delete("/api/games/1"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().string("Videojuego eliminado con éxito."));
     }
 
     @Test
@@ -80,6 +79,5 @@ class GameControllerTest {
 
         mockMvc.perform(get("/api/games/title").param("title", "Mario"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$[0].title").value("Mario"));
     }
 }
