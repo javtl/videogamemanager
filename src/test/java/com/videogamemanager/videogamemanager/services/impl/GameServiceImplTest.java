@@ -1,3 +1,4 @@
+
 package com.videogamemanager.videogamemanager.services.impl;
 
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GameServiceImplTest {
@@ -53,6 +53,7 @@ class GameServiceImplTest {
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
+        verify(repository, times(1)).findAll();
     }
 
     @Test
@@ -65,13 +66,11 @@ class GameServiceImplTest {
 
         assertNotNull(saved);
         assertEquals("Zelda", saved.getTitle());
+        verify(repository).save(any());
     }
 
-    @Test
-    void saveGame_ThrowsException_WhenTitleEmpty() {
-        gameDto.setTitle("");
-        assertThrows(InvalidGameException.class, () -> gameService.saveGame(gameDto));
-    }
+    // ELIMINADO: saveGame_ThrowsException_WhenTitleEmpty
+    // ¿Por qué? Porque esa responsabilidad ahora es del Controlador y @Valid.
 
     @Test
     void updateGame_Success() {
@@ -83,24 +82,52 @@ class GameServiceImplTest {
 
         assertNotNull(updated);
         verify(mapper).updateEntityFromDto(any(), any());
+        verify(repository).save(any());
     }
 
     @Test
     void updateGame_ThrowsException_NotFound() {
         when(repository.findById("2")).thenReturn(Optional.empty());
+
         assertThrows(InvalidGameException.class, () -> gameService.updateGame("2", gameDto));
     }
 
     @Test
     void deleteGame_Success() {
         when(repository.existsById("1")).thenReturn(true);
+
         gameService.deleteGame("1");
+
         verify(repository).deleteById("1");
     }
 
     @Test
     void deleteGame_ThrowsException_NotFound() {
         when(repository.existsById("2")).thenReturn(false);
+
         assertThrows(InvalidGameException.class, () -> gameService.deleteGame("2"));
+        verify(repository, never()).deleteById(anyString());
+    }
+
+    @Test
+    void findByGenre_ShouldReturnList() {
+        when(repository.findByGenreIgnoreCase("Aventura")).thenReturn(List.of(game));
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        List<GameDto> result = gameService.findByGenre("Aventura");
+
+        assertFalse(result.isEmpty());
+        verify(repository).findByGenreIgnoreCase("Aventura");
+    }
+
+    @Test
+    void findByTitle_ShouldReturnList() {
+        when(repository.findByTitleContainingIgnoreCase("Zelda")).thenReturn(List.of(game));
+        when(mapper.toDTO(any())).thenReturn(gameDto);
+
+        List<GameDto> result = gameService.findByTitle("Zelda");
+
+        assertFalse(result.isEmpty());
+        verify(repository).findByTitleContainingIgnoreCase("Zelda");
     }
 }
