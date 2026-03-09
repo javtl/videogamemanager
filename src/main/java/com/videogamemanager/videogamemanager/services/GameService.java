@@ -1,14 +1,22 @@
 package com.videogamemanager.videogamemanager.services;
 
-import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameDto;
 
 import java.util.List;
 
 
 public interface GameService {
 
-    List<Game> getAllGames();
+    void deleteGame(String id);
 
-    Game saveGame(Game game);
+    List<GameDto> getAllGames();
+
+    GameDto saveGame(GameDto game);
+
+    GameDto updateGame(String id, GameDto game);
+
+    List<GameDto> findByGenre(String genre);
+
+    List<GameDto> findByTitle(String title);
 }
 
