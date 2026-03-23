@@ -49,7 +49,7 @@ class GameServiceImplTest {
         when(repository.findAll()).thenReturn(List.of(game));
         when(mapper.toDTO(any())).thenReturn(gameDto);
 
-        List<GameDto> result = gameService.getAllGames();
+        List<GameDto> result = gameService.getAllGames(pageable);
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());

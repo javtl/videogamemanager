@@ -27,7 +27,7 @@ public class GameDto {
         @Schema(description = "Edad mínima recomendada", example = "12")
         @Min(value = 0, message = "La edad no puede ser negativa")
         @Max(value = 18, message = "La edad máxima es 18")
-        private int age;
+        private Integer age;
 
         @Schema(description = "Indica si el juego ha sido completado", example = "false")
         @NotNull(message = "El estado de completado es obligatorio")

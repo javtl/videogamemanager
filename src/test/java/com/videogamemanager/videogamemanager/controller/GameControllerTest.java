@@ -46,7 +46,7 @@ class GameControllerTest {
 
     @Test
     void getAll_ShouldReturnOk() throws Exception {
-        when(gameService.getAllGames()).thenReturn(List.of(gameDto));
+        when(gameService.getAllGames(pageable)).thenReturn(List.of(gameDto));
 
         mockMvc.perform(get("/api/games/all"))
                 .andExpect(status().isOk())

@@ -15,7 +15,7 @@ public class Game {
     private String title;
     private String genre;
     private int releaseYear;
-    private int age;
+    private Integer age;
     private boolean completed;
 
     @CreatedDate
@@ -23,4 +23,6 @@ public class Game {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    private boolean active = true;
 }
