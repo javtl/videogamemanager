@@ -4,7 +4,7 @@ import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+
 
 /**
  * Interfaz que define los servicios de lógica de negocio para la gestión de videojuegos.
@@ -17,7 +17,7 @@ public interface GameService {
     /**
      * Elimina de forma permanente un videojuego del sistema.
      * * @param id Identificador único (UUID) del juego a eliminar.
-     * @throws ResourceNotFoundException si el ID no corresponde a ningún juego existente.
+     *
      */
     void deleteGame(String id);
 
