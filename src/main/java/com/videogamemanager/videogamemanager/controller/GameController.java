@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/games")
@@ -23,11 +25,12 @@ public class GameController {
 
     private final GameService gameService;
 
-    @Operation(summary = "Obtener todos los juegos", description = "Retorna una lista con todos los videojuegos registrados en la base de datos.")
+    @Operation(summary = "Obtener todos los juegos paginados", description = "Retorna una página de videojuegos con información de paginación.")
     @ApiResponse(responseCode = "200", description = "Operación exitosa")
     @GetMapping("/all")
-    public ResponseEntity<List<GameDto>> getAll(){
-        return ResponseEntity.ok(gameService.getAllGames());
+    public ResponseEntity<Page<GameDto>> getAll(Pageable pageable) {
+        // Le pasamos el pageable que nos da Spring directamente al service
+        return ResponseEntity.ok(gameService.getAllGames(pageable));
     }
 
     @Operation(summary = "Registrar un nuevo juego", description = "Crea un nuevo videojuego. El título es obligatorio.")
@@ -38,6 +41,12 @@ public class GameController {
     @PostMapping
     public ResponseEntity<GameDto> saveGame(@Valid @RequestBody GameDto gameDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(gameService.saveGame(gameDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<GameDto>> getAllGames(Pageable pageable) {
+
+        return ResponseEntity.ok(gameService.getAllGames(pageable));
     }
 
     @Operation(summary = "Eliminar un juego por ID")
@@ -59,15 +68,13 @@ public class GameController {
         return ResponseEntity.ok(gameService.updateGame(id, gameDto));
     }
 
-    @GetMapping("/genre/{genre}")
-    public ResponseEntity<List<GameDto>> getByGenre(@PathVariable String genre){
-        return ResponseEntity.ok(gameService.findByGenre(genre));
+    @PostMapping("/search")
+    @Operation(summary = "Búsqueda avanzada", description = "Filtra por cualquier campo enviado en el body")
+    public ResponseEntity<Page<GameDto>> search(@RequestBody GameDto filter, @ParameterObject Pageable pageable){
+          return ResponseEntity.ok(gameService.findGamesFiltered(filter, pageable));
     }
 
-    @GetMapping("/title")
-    public ResponseEntity<List<GameDto>> getByTitle(@RequestParam String title){
-        return ResponseEntity.ok(gameService.findByTitle(title));
-    }
+
 }
 
 

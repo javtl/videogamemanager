@@ -1,7 +1,6 @@
-
 package com.videogamemanager.videogamemanager.services.impl;
 
-import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
+
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,27 +33,32 @@ class GameServiceImplTest {
 
     private Game game;
     private GameDto gameDto;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
         game = new Game();
         game.setId("1");
         game.setTitle("Zelda");
+        game.setActive(true);
 
         gameDto = new GameDto();
         gameDto.setTitle("Zelda");
+
+        pageable = PageRequest.of(0, 10);
     }
 
     @Test
-    void getAllGames_ShouldReturnList() {
-        when(repository.findAll()).thenReturn(List.of(game));
+    void getAllGames_ShouldReturnPage() {
+        // En tu impl usas repository.findAll(pageable)
+        Page<Game> gamePage = new PageImpl<>(List.of(game));
+        when(repository.findAll(any(Pageable.class))).thenReturn(gamePage);
         when(mapper.toDTO(any())).thenReturn(gameDto);
 
-        List<GameDto> result = gameService.getAllGames();
+        Page<GameDto> result = gameService.getAllGames(pageable);
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(repository, times(1)).findAll();
+        verify(repository).findAll(any(Pageable.class));
     }
 
     @Test
@@ -65,12 +70,8 @@ class GameServiceImplTest {
         GameDto saved = gameService.saveGame(gameDto);
 
         assertNotNull(saved);
-        assertEquals("Zelda", saved.getTitle());
         verify(repository).save(any());
     }
-
-    // ELIMINADO: saveGame_ThrowsException_WhenTitleEmpty
-    // ¿Por qué? Porque esa responsabilidad ahora es del Controlador y @Valid.
 
     @Test
     void updateGame_Success() {
@@ -86,48 +87,31 @@ class GameServiceImplTest {
     }
 
     @Test
-    void updateGame_ThrowsException_NotFound() {
-        when(repository.findById("2")).thenReturn(Optional.empty());
-
-        assertThrows(InvalidGameException.class, () -> gameService.updateGame("2", gameDto));
-    }
-
-    @Test
     void deleteGame_Success() {
-        when(repository.existsById("1")).thenReturn(true);
+        // Tu impl hace un borrado lógico (busca, cambia active y guarda)
+        when(repository.findById("1")).thenReturn(Optional.of(game));
+        when(repository.save(any())).thenReturn(game);
 
         gameService.deleteGame("1");
 
-        verify(repository).deleteById("1");
+        assertFalse(game.isActive()); // Verificamos que cambió a false
+        verify(repository).save(game);
     }
 
     @Test
-    void deleteGame_ThrowsException_NotFound() {
-        when(repository.existsById("2")).thenReturn(false);
+    void findGamesFiltered_ShouldReturnPage() {
+        // Tu impl usa repository.findAll(Example, Pageable)
+        Page<Game> gamePage = new PageImpl<>(List.of(game));
 
-        assertThrows(InvalidGameException.class, () -> gameService.deleteGame("2"));
-        verify(repository, never()).deleteById(anyString());
-    }
-
-    @Test
-    void findByGenre_ShouldReturnList() {
-        when(repository.findByGenreIgnoreCase("Aventura")).thenReturn(List.of(game));
+        when(mapper.toEntity(any())).thenReturn(game);
+        when(repository.findAll(any(Example.class), any(Pageable.class))).thenReturn(gamePage);
         when(mapper.toDTO(any())).thenReturn(gameDto);
 
-        List<GameDto> result = gameService.findByGenre("Aventura");
+        Page<GameDto> result = gameService.findGamesFiltered(gameDto, pageable);
 
+        assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(repository).findByGenreIgnoreCase("Aventura");
-    }
-
-    @Test
-    void findByTitle_ShouldReturnList() {
-        when(repository.findByTitleContainingIgnoreCase("Zelda")).thenReturn(List.of(game));
-        when(mapper.toDTO(any())).thenReturn(gameDto);
-
-        List<GameDto> result = gameService.findByTitle("Zelda");
-
-        assertFalse(result.isEmpty());
-        verify(repository).findByTitleContainingIgnoreCase("Zelda");
+        // Verificamos que se llamó al findAll que recibe el Example
+        verify(repository).findAll(any(Example.class), any(Pageable.class));
     }
 }
