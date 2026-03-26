@@ -7,7 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl; // Importante para el Page
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,8 +40,8 @@ class GameControllerTest {
         gameDto = new GameDto();
         gameDto.setTitle("Mario Bros");
         gameDto.setGenre("Adventure");
-        // gameDto.setReleaseYear(1985); // Asegúrate que este campo existe en tu DTO actual
-        gameDto.setAge(3); // Nuestro querido Integer
+        gameDto.setReleaseYear(1985);
+        gameDto.setAge(3); 
         gameDto.setCompleted(true);
     }
 
@@ -79,12 +80,15 @@ class GameControllerTest {
     void getByTitle_ShouldReturnPage() throws Exception {
         // 1. Configuramos el mock para el nuevo método unificado
         // 'any(GameDto.class)' es el filtro y 'any(Pageable.class)' es la paginación
-        when(gameService.findGamesFiltered(any(GameDto.class), any(org.springframework.data.domain.Pageable.class)))
-                .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(gameDto)));
+        when(gameService.findGamesFiltered(any(GameDto.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(gameDto)));
 
         // 2. Ejecutamos la petición (suponiendo que tu controller aún tiene esta ruta)
-        mockMvc.perform(get("/api/games/title")
-                        .param("title", "Mario"))
+        mockMvc.perform(post("/api/games/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(gameDto))
+                        .param("page", "0")
+                        .param("size", "0"))
                 .andExpect(status().isOk())
                 // IMPORTANTE: Al ser Page, los datos van dentro de "content"
                 .andExpect(jsonPath("$.content[0].title").value("Mario Bros"));
