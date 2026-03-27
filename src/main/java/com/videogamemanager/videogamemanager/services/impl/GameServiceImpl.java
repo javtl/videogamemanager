@@ -3,6 +3,7 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Page<GameDto> getAllGames(Pageable pageable) {
+        log.info("Obteniendo todos los juegos");
         return repository.findAll(pageable).map(mapper::toDTO);
     }
 
@@ -76,6 +80,14 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public List<AdminGameDto> getAllGamesWithId() {
+        log.info("Obteniendo todos los juegos con id");
+        return repository.findAll().stream()
+                .map(mapper::toAdminDTO)
+                .toList();
+    }
+
+    @Override
     public void deleteGame(String id) {
         log.info("Eliminando videojuego con id: {}", id);
 
@@ -86,7 +98,5 @@ public class GameServiceImpl implements GameService {
 
         repository.save(game);
     }
-
-
 }
 

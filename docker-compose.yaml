@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-vgm
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  videogame-app:
+    build: .
+    container_name: videogame-app-vgm
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    environment:
+      # IMPORTANTE: Aquí cambiamos localhost por el nombre del servicio 'mongodb'
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/videogamedb
+
+volumes:
+  mongo_data:
