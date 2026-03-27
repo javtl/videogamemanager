@@ -1,6 +1,7 @@
 package com.videogamemanager.videogamemanager.controller;
 
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -72,6 +75,14 @@ public class GameController {
     @Operation(summary = "Búsqueda avanzada", description = "Filtra por cualquier campo enviado en el body")
     public ResponseEntity<Page<GameDto>> search(@RequestBody GameDto filter, @ParameterObject Pageable pageable){
           return ResponseEntity.ok(gameService.findGamesFiltered(filter, pageable));
+    }
+
+    @Operation(summary = "Obtener estadisticas por genero")
+    @ApiResponse(responseCode = "200", description = "Operación exitosa")
+    @GetMapping("/stats")
+    public ResponseEntity<List<GameStatsDto>> getStats() {
+
+        return ResponseEntity.ok(gameService.getStatsByGenre());
     }
 
 

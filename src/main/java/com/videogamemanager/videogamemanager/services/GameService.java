@@ -1,9 +1,11 @@
 package com.videogamemanager.videogamemanager.services;
 
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 
 
 /**
@@ -50,4 +52,6 @@ public interface GameService {
      * @return Página de resultados que coinciden con los criterios de búsqueda.
      */
     Page<GameDto> findGamesFiltered(GameDto filter, Pageable pageable);
+
+    List<GameStatsDto> getStatsByGenre();
 }

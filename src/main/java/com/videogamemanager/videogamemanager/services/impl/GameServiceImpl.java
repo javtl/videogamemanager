@@ -4,15 +4,20 @@ import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ public class GameServiceImpl implements GameService {
 
     private final GameMapper mapper;
     private final GameRepository repository;
+    private final MongoTemplate mongoTemplate;
 
     /**
      * Recupera el catálogo completo de videojuegos de forma paginada.
@@ -76,6 +82,31 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public List<GameStatsDto> getStatsByGenre() {
+        // 1. Agrupar por género ($group)
+        GroupOperation groupByGenre = Aggregation.group("genre")
+                .count().as("totalGames")
+                .avg("age")
+                .as("averageAge");
+        // 2. Proyectar el resultado al DTO ($project)
+        ProjectionOperation projectToDto = Aggregation.project()
+                .andExpression("_id").as("genre")
+                .andInclude("totalGames", "averageAge");
+
+        // 3. Ordenar por cantidad de juegos descendente ($sort)
+        SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, "totalGames");
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                groupByGenre,
+                projectToDto,
+                sortByTotal
+        );
+
+        return mongoTemplate.aggregate(aggregation, "games", GameStatsDto.class).getMappedResults();
+
+    }
+
+    @Override
     public void deleteGame(String id) {
         log.info("Eliminando videojuego con id: {}", id);
 
@@ -86,6 +117,7 @@ public class GameServiceImpl implements GameService {
 
         repository.save(game);
     }
+
 
 
 }
