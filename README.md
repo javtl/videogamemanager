@@ -10,7 +10,10 @@
 
 **VideoGame Manager** is a RESTful API designed to manage a catalog of 150+ video games. This project serves as my personal lab for mastering **Spring Boot**, **NoSQL persistence**, and **DevOps automation** within the Java ecosystem.
 
-> [\!NOTE] > **Work in Progress:** This project is currently under active development as part of my DAM (Multi-platform Application Development) studies. New features and architectural improvements are being added regularly.  
+> [!NOTE]
+> **Work in Progress:** This project is currently under active development as part of my **DAM (Multi-platform Application Development)** studies.
+> 
+> **Mentorship & Transparency:** I am developing this project under the **active mentorship of a Senior Developer**. This collaborative approach ensures that the architectural decisions (Dockerization, CI/CD with Jenkins, MongoDB Aggregations) follow professional industry standards. My goal is to build a high-quality, production-ready backend while learning best practices from real-world experience.
 
 ## 🛠️ Tech Stack
 
