@@ -1,5 +1,6 @@
 package com.videogamemanager.videogamemanager.controller;
 
+import com.videogamemanager.videogamemanager.models.dto.GameAdminDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
@@ -83,6 +84,11 @@ public class GameController {
     public ResponseEntity<List<GameStatsDto>> getStats() {
 
         return ResponseEntity.ok(gameService.getStatsByGenre());
+    }
+
+    @GetMapping("/admin/list")
+    public ResponseEntity<List<GameAdminDto>> getAllGamesAdmin() {
+        return ResponseEntity.ok(gameService.getAllGamesForAdmin());
     }
 
 
