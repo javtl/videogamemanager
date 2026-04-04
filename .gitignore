@@ -1,38 +1,63 @@
-HELP.md
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+
+# --- Build / Artifacts ---
 target/
-.mvn/wrapper/maven-wrapper.jar
+build/
+bin/
+out/
+*.class
+*.war
+*.ear
+*.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-### STS ###
+# --- Maven ---
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+HELP.md
+
+# --- Security & Credentials (CRITICAL) ---
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+**/application-local.properties
+**/application-secret.properties
+secrets.xml
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# --- VS Code ---
+.vscode/
+*.code-workspace
+
+# --- STS / Eclipse ---
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
+.sts4-cache/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-.env
-
-### NetBeans ###
+# --- NetBeans ---
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
-
-.idea/
-
-**/application-local.properties
+# --- Docker ---
+# Descomenta si quieres ignorar logs de contenedores locales
+# *.log
