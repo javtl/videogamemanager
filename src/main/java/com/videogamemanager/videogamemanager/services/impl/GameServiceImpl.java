@@ -86,11 +86,11 @@ public class GameServiceImpl implements GameService {
                 .count().as("totalGames")
                 .avg("age")
                 .as("averageAge")
-                .push(Aggregation.ROOT).as("game");
+                .push(Aggregation.ROOT).as("games");
         // 2. Proyectar el resultado al DTO ($project)
         ProjectionOperation projectToDto = Aggregation.project()
                 .andExpression("_id").as("genre")
-                .andInclude("totalGames", "averageAge","game");
+                .andInclude("totalGames", "averageAge","games");
 
         // 3. Ordenar por cantidad de juegos descendente ($sort)
         SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, "totalGames");
