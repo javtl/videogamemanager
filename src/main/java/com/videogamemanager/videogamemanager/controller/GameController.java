@@ -85,13 +85,6 @@ public class GameController {
 
         return ResponseEntity.ok(gameService.getStatsByGenre());
     }
-
-    @GetMapping("/admin/list")
-    public ResponseEntity<List<GameAdminDto>> getAllGamesAdmin() {
-        return ResponseEntity.ok(gameService.getAllGamesForAdmin());
-    }
-
-
 }
 
 

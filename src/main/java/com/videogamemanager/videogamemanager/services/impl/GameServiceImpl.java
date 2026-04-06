@@ -3,7 +3,6 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
-import com.videogamemanager.videogamemanager.models.dto.GameAdminDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
@@ -88,11 +87,12 @@ public class GameServiceImpl implements GameService {
         GroupOperation groupByGenre = Aggregation.group("genre")
                 .count().as("totalGames")
                 .avg("age")
-                .as("averageAge");
+                .as("averageAge")
+                .push(Aggregation.ROOT).as("games");
         // 2. Proyectar el resultado al DTO ($project)
         ProjectionOperation projectToDto = Aggregation.project()
                 .andExpression("_id").as("genre")
-                .andInclude("totalGames", "averageAge");
+                .andInclude("totalGames", "averageAge","games");
 
         // 3. Ordenar por cantidad de juegos descendente ($sort)
         SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, "totalGames");
@@ -118,17 +118,5 @@ public class GameServiceImpl implements GameService {
 
         repository.save(game);
     }
-
-    @Override
-    public Page<GameAdminDto> findAllForAdmin(Pageable pageable) {
-        // Traemos la página de entidades de Atlas
-        Page<Game> gamePage = GameRepository.findAll(pageable);
-
-        // Convertimos cada Game en GameAdminDto usando tu estándar
-        return gamePage.map(GameMapper::toAdminDto);
-    }
-
-
-
 }
 
