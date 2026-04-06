@@ -101,7 +101,7 @@ public class GameServiceImpl implements GameService {
                 sortByTotal
         );
 
-        AggregationResults<Document> rawResults = mongoTemplate.aggregate(aggregation, "games", Document.class);
+        AggregationResults<Document> rawResults = mongoTemplate.aggregate(aggregation, "game", Document.class);
         log.info("RESULTADO RAW DE MONGO: {}", rawResults.getMappedResults());
 
         return mongoTemplate.aggregate(aggregation, "game", GameStatsDto.class).getMappedResults();
