@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools {
             maven 'maven-3.9'
-            dockerTool 'docker-tool'
         }
     environment {
         DOCKER_IMAGE = "videogame-manager-app"
