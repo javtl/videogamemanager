@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+            maven 'maven-3.9'
+        }
     environment {
         DOCKER_IMAGE = "videogame-manager-app"
     }
@@ -12,14 +15,20 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                // Esto crea la imagen de Docker usando el Dockerfile de la raíz
                 sh "docker build -t ${DOCKER_IMAGE}:latest ."
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Nombre configurado en Jenkins
+                withSonarQubeEnv('SonarQube') {
                     sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }

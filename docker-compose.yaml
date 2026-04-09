@@ -15,8 +15,32 @@ services:
     depends_on:
       - mongodb
     environment:
-      # IMPORTANTE: Aquí cambiamos localhost por el nombre del servicio 'mongodb'
+      # Dentro de la red de Docker, usamos el nombre del servicio 'mongodb'
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/videogamedb
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-vgm
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock # Permite a Jenkins usar Docker del host
+
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube-vgm
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
 
 volumes:
   mongo_data:
+  jenkins_data:
+  sonarqube_data:
+  sonarqube_extensions:
