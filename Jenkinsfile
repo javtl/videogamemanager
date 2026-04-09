@@ -20,18 +20,20 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    withSonarQubeEnv('SonarQube') {
-                        script {
-                            def branchSuffix = env.BRANCH_NAME == 'master' ? '' : "-${env.BRANCH_NAME}"
-                            sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectName=vgm${branchSuffix} -Dsonar.projectKey=vgm${branchSuffix}"
-                        }
-                    }
-                }
-            }
-        }
+       stage('SonarQube Analysis') {
+           steps {
+               withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                   script {
+                       def cleanBranchName = env.BRANCH_NAME.replaceAll("/", "-")
+                       def projectIdentifier = "vgm-${cleanBranchName}"
+
+                       withSonarQubeEnv('SonarQube') {
+                           sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectName=${projectIdentifier} -Dsonar.projectKey=${projectIdentifier}"
+                       }
+                   }
+               }
+           }
+       }
         stage("Quality Gate") {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
