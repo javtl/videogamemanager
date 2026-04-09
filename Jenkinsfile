@@ -15,7 +15,9 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                }
             }
         }
         stage('SonarQube Analysis') {
