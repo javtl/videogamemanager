@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools {
             maven 'maven-3.9'
-            docker 'docker-tool'
         }
     environment {
         DOCKER_IMAGE = "videogame-manager-app"
@@ -16,7 +15,9 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                }
             }
         }
         stage('SonarQube Analysis') {
