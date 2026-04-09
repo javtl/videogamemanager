@@ -22,8 +22,13 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarQube') {
+                        script {
+                            def branchSuffix = env.BRANCH_NAME == 'master' ? '' : "-${env.BRANCH_NAME}"
+                            sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectName=vgm${branchSuffix} -Dsonar.projectKey=vgm${branchSuffix}"
+                        }
+                    }
                 }
             }
         }
