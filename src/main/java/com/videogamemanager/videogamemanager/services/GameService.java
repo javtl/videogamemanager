@@ -1,5 +1,6 @@
 package com.videogamemanager.videogamemanager.services;
 
+import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import org.springframework.data.domain.Page;

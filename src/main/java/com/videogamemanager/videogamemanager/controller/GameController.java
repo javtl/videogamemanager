@@ -1,6 +1,7 @@
 package com.videogamemanager.videogamemanager.controller;
 
 import com.videogamemanager.videogamemanager.models.dto.GameAdminDto;
+import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
@@ -12,11 +13,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -28,6 +33,9 @@ import java.util.List;
 public class GameController {
 
     private final GameService gameService;
+
+    @Value("${app.admin.token}")
+    private String adminToken;
 
     @Operation(summary = "Obtener todos los juegos paginados", description = "Retorna una página de videojuegos con información de paginación.")
     @ApiResponse(responseCode = "200", description = "Operación exitosa")
@@ -45,12 +53,6 @@ public class GameController {
     @PostMapping
     public ResponseEntity<GameDto> saveGame(@Valid @RequestBody GameDto gameDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(gameService.saveGame(gameDto));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<GameDto>> getAllGames(Pageable pageable) {
-
-        return ResponseEntity.ok(gameService.getAllGames(pageable));
     }
 
     @Operation(summary = "Eliminar un juego por ID")

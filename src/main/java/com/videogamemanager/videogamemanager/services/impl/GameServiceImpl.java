@@ -3,6 +3,7 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
@@ -36,6 +37,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Page<GameDto> getAllGames(Pageable pageable) {
+        log.info("Obteniendo todos los juegos");
         return repository.findAll(pageable).map(mapper::toDTO);
     }
 
@@ -119,5 +121,7 @@ public class GameServiceImpl implements GameService {
 
         repository.save(game);
     }
+
+
 }
 
