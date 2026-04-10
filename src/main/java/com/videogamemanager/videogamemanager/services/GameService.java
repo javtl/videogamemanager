@@ -55,4 +55,6 @@ public interface GameService {
     Page<GameDto> findGamesFiltered(GameDto filter, Pageable pageable);
 
     List<GameStatsDto> getStatsByGenre();
+
+    List<AdminGameDto> getAllGamesWithId();
 }

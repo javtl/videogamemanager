@@ -122,6 +122,12 @@ public class GameServiceImpl implements GameService {
         repository.save(game);
     }
 
-
+    @Override
+    public List<AdminGameDto> getAllGamesWithId() {
+        log.info("Obteniendo todos los juegos con id");
+        return repository.findAll().stream()
+                .map(mapper::toAdminDTO)
+                .toList();
+    }
 }
 
