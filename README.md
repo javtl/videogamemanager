@@ -56,7 +56,3 @@ The project is designed to run entirely within **Docker**:
 *Note: Focused on professional backend development standards and hands-on DevOps practices.*
 
 -----
-
-**Un último detalle:** Asegúrate de que el archivo se llame exactamente `README.md` (en mayúsculas) en la raíz de tu proyecto para que GitHub lo renderice automáticamente.
-
-¡Ya lo tienes listo para subir\! ¿Te convence este enfoque?
