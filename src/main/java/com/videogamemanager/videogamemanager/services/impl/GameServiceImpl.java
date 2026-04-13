@@ -3,7 +3,6 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
-import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
@@ -120,14 +119,6 @@ public class GameServiceImpl implements GameService {
         game.setActive(false);
 
         repository.save(game);
-    }
-
-    @Override
-    public List<AdminGameDto> getAllGamesWithId() {
-        log.info("Obteniendo todos los juegos con id");
-        return repository.findAll().stream()
-                .map(mapper::toAdminDTO)
-                .toList();
     }
 }
 
