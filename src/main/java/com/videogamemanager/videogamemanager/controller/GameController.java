@@ -2,6 +2,7 @@ package com.videogamemanager.videogamemanager.controller;
 
 import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -76,17 +77,22 @@ public class GameController {
           return ResponseEntity.ok(gameService.findGamesFiltered(filter, pageable));
     }
 
+    @Operation(summary = "Obtener estadisticas por genero")
+    @ApiResponse(responseCode = "200", description = "Operación exitosa")
+    @GetMapping("/stats")
+    public ResponseEntity<List<GameStatsDto>> getStats() {
+
+        return ResponseEntity.ok(gameService.getStatsByGenre());
+    }
+
     @GetMapping("/admin/all")
     @Operation(summary = "Listado completo con id(solo admin)")
     public ResponseEntity<List<AdminGameDto>> getAllWithId(@RequestHeader(("X-Admin-Token")) String token) {
 
         if(!adminToken.equals(token)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
-        }
-        return ResponseEntity.ok(gameService.getAllGamesWithId());
+        }    return ResponseEntity.ok(gameService.getAllGamesWithId());
     }
-
-
 }
 
 
