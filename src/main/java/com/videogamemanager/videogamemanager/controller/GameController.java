@@ -1,7 +1,7 @@
 package com.videogamemanager.videogamemanager.controller;
 
-import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -76,17 +75,13 @@ public class GameController {
           return ResponseEntity.ok(gameService.findGamesFiltered(filter, pageable));
     }
 
-    @GetMapping("/admin/all")
-    @Operation(summary = "Listado completo con id(solo admin)")
-    public ResponseEntity<List<AdminGameDto>> getAllWithId(@RequestHeader(("X-Admin-Token")) String token) {
+    @Operation(summary = "Obtener estadisticas por genero")
+    @ApiResponse(responseCode = "200", description = "Operación exitosa")
+    @GetMapping("/stats")
+    public ResponseEntity<List<GameStatsDto>> getStats() {
 
-        if(!adminToken.equals(token)){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
-        }
-        return ResponseEntity.ok(gameService.getAllGamesWithId());
+        return ResponseEntity.ok(gameService.getStatsByGenre());
     }
-
-
 }
 
 

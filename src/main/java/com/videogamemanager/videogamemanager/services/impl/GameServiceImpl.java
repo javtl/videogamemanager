@@ -3,16 +3,16 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
-import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.bson.Document;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +25,7 @@ public class GameServiceImpl implements GameService {
 
     private final GameMapper mapper;
     private final GameRepository repository;
+    private final MongoTemplate mongoTemplate;
 
     /**
      * Recupera el catálogo completo de videojuegos de forma paginada.
@@ -80,11 +81,32 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<AdminGameDto> getAllGamesWithId() {
-        log.info("Obteniendo todos los juegos con id");
-        return repository.findAll().stream()
-                .map(mapper::toAdminDTO)
-                .toList();
+    public List<GameStatsDto> getStatsByGenre() {
+        // 1. Agrupar por género ($group)
+        GroupOperation groupByGenre = Aggregation.group("genre")
+                .count().as("totalGames")
+                .avg("age")
+                .as("averageAge")
+                .push(Aggregation.ROOT).as("games");
+        // 2. Proyectar el resultado al DTO ($project)
+        ProjectionOperation projectToDto = Aggregation.project()
+                .andExpression("_id").as("genre")
+                .andInclude("totalGames", "averageAge","games");
+
+        // 3. Ordenar por cantidad de juegos descendente ($sort)
+        SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, "totalGames");
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                groupByGenre,
+                projectToDto,
+                sortByTotal
+        );
+
+        AggregationResults<Document> rawResults = mongoTemplate.aggregate(aggregation, "game", Document.class);
+        log.info("RESULTADO RAW DE MONGO: {}", rawResults.getMappedResults());
+
+        return mongoTemplate.aggregate(aggregation, "game", GameStatsDto.class).getMappedResults();
+
     }
 
     @Override

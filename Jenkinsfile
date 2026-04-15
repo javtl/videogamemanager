@@ -20,20 +20,24 @@ pipeline {
                 }
             }
         }
-       stage('SonarQube Analysis') {
-           steps {
-               withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                   script {
-                       def cleanBranchName = env.BRANCH_NAME.replaceAll("/", "-")
-                       def projectIdentifier = "vgm-${cleanBranchName}"
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    // Esto envuelve el comando de Maven
+                    withSonarQubeEnv('SonarQube') {
+                        sh "mvn sonar:sonar"
+                    }
 
-                       withSonarQubeEnv('SonarQube') {
-                           sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectName=${projectIdentifier} -Dsonar.projectKey=${projectIdentifier}"
-                       }
-                   }
-               }
-           }
-       }
+                    // Este paso detiene el pipeline hasta que Sonar responda (vía Webhook)
+                    timeout(time: 5, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline abortado por baja cobertura: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
         stage("Quality Gate") {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
