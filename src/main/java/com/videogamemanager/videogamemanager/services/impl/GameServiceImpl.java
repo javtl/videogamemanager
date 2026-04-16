@@ -7,6 +7,7 @@ import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
 import com.videogamemanager.videogamemanager.services.GameService;
+import com.videogamemanager.videogamemanager.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -84,17 +85,17 @@ public class GameServiceImpl implements GameService {
     public List<GameStatsDto> getStatsByGenre() {
         // 1. Agrupar por género ($group)
         GroupOperation groupByGenre = Aggregation.group("genre")
-                .count().as("totalGames")
+                .count().as(AppConstants.TOTAL_GAMES)
                 .avg("age")
                 .as("averageAge")
                 .push(Aggregation.ROOT).as("games");
         // 2. Proyectar el resultado al DTO ($project)
         ProjectionOperation projectToDto = Aggregation.project()
                 .andExpression("_id").as("genre")
-                .andInclude("totalGames", "averageAge","games");
+                .andInclude(AppConstants.TOTAL_GAMES, "averageAge","games");
 
         // 3. Ordenar por cantidad de juegos descendente ($sort)
-        SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, "totalGames");
+        SortOperation sortByTotal = Aggregation.sort(Sort.Direction.DESC, AppConstants.TOTAL_GAMES);
 
         Aggregation aggregation = Aggregation.newAggregation(
                 groupByGenre,
