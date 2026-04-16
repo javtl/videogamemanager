@@ -1,8 +1,7 @@
 package com.videogamemanager.videogamemanager.mapper;
 
-import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
-import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -37,6 +36,4 @@ public interface GameMapper {
      * @param game    Entidad de destino que será modificada ({@link MappingTarget}).
      */
     void updateEntityFromDto(GameDto gameDto, @MappingTarget Game game);
-
-    AdminGameDto toAdminDTO(Game game);
 }

@@ -51,6 +51,14 @@ out/
 .springBeans
 .sts4-cache/
 
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+.env
+
+### NetBeans ###
 # --- NetBeans ---
 /nbproject/private/
 /nbbuild/
@@ -58,6 +66,6 @@ out/
 /nbdist/
 /.nb-gradle/
 
-# --- Docker ---
-# Descomenta si quieres ignorar logs de contenedores locales
-# *.log
+.idea/
+
+**/application-local.properties

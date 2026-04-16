@@ -1,7 +1,7 @@
 package com.videogamemanager.videogamemanager.services;
 
-import com.videogamemanager.videogamemanager.models.dto.AdminGameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
+import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -53,6 +53,5 @@ public interface GameService {
      */
     Page<GameDto> findGamesFiltered(GameDto filter, Pageable pageable);
 
-    List<AdminGameDto> getAllGamesWithId();
-
+    List<GameStatsDto> getStatsByGenre();
 }
