@@ -6,7 +6,7 @@ public class AppConstants {
         throw new IllegalStateException("Utility class");
     }
 
-    public static final String MSG_GAME_DELETE = "Videojuego eliminado con exito";
+    public static final String MSG_GAME_DELETE = "Videojuego eliminado con éxito.";
     public static final String MSG_GAME_NOT_FOUND = "Videojuego no encontrado con exito";
 
     public static final String DEFAULT_PAGE_NUMBER = "0";

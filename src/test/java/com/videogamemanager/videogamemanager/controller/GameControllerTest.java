@@ -1,29 +1,31 @@
-/* package com.videogamemanager.videogamemanager.controller;
+package com.videogamemanager.videogamemanager.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.services.GameService;
+import com.videogamemanager.videogamemanager.utils.AppConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(GameController.class)
 class GameControllerTest {
@@ -31,7 +33,7 @@ class GameControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean // API oficial para Spring Boot 3.4+
+    @MockitoBean
     private GameService gameService;
 
     @Autowired
@@ -50,30 +52,27 @@ class GameControllerTest {
     }
 
     @Test
-    void getAll_ShouldReturnOk() throws Exception {
-        when(gameService.getAllGames(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(gameDto)));
+    void getAll_ShouldReturnPagedGames() throws Exception {
+        when(gameService.getAllGames(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(gameDto)));
 
         mockMvc.perform(get("/api/games/all"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Mario Bros")));
+                // Verificamos la estructura de página de Spring Data
+                .andExpect(jsonPath("$.content[0].title", is("Mario Bros")))
+                .andExpect(jsonPath("$.totalElements", is(1)));
     }
 
     @Test
     void getStatsByGenre_ShouldReturnStatsList() throws Exception {
-        // 1. Creamos el objeto con datos explícitos
-        GameStatsDto stats = new GameStatsDto();
-        stats.setGenre("Adventure");
-        stats.setTotalGames(1L);
-        stats.setAverageAge(10.0);
+        GameStatsDto stats = new GameStatsDto("Adventure", 1L, 10.0, null);
 
-        // 2. Mockeo ultra-seguro
-        // Usamos Mockito.doReturn para evitar problemas de tipos genéricos
-        Mockito.doReturn(List.of(stats)).when(gameService).getStatsByGenre();
+        // Forzamos el retorno con Mockito de forma limpia
+        when(gameService.getStatsByGenre()).thenReturn(List.of(stats));
 
-        // 3. Ejecución
-        mockMvc.perform(get("/api/games/stats/genre")
+        mockMvc.perform(get("/api/games/stats")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()) // <--- MIRA LA CONSOLA AQUÍ
+                .andDo(print()) // Esto te dirá el error real en la consola si vuelve a fallar
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].genre").value("Adventure"));
     }
@@ -86,7 +85,7 @@ class GameControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(gameDto)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("Mario Bros")));
+                .andExpect(jsonPath("$.title", is("Mario Bros")));
     }
 
     @Test
@@ -95,7 +94,8 @@ class GameControllerTest {
 
         mockMvc.perform(delete("/api/games/id-123"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Videojuego eliminado con éxito")));
+                // Comparamos directamente contra la constante, así no hay fallo de tildes
+                .andExpect(content().string(AppConstants.MSG_GAME_DELETE));
     }
 
     @Test
@@ -106,9 +106,18 @@ class GameControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(gameDto)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Mario Bros")));
+                .andExpect(jsonPath("$.title", is("Mario Bros")))
+                .andExpect(jsonPath("$.genre", is("Adventure")));
+    }
+
+    @Test
+    void search_ShouldReturnFilteredPage() throws Exception{
+        Page<GameDto> page = new PageImpl<>(List.of(gameDto));
+        when(gameService.findGamesFiltered(any(), any())).thenReturn(page);
+
+        mockMvc.perform(post("/api/games/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(gameDto)))
+                .andExpect(status().isOk());
     }
 }
-
-
- */
