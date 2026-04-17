@@ -112,6 +112,15 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.11</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/com/videogamemanager/videogamemanager/models/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/model/dto/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/mapper/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/configuration/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/exceptions/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
