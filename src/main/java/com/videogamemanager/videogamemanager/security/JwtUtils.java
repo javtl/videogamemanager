@@ -50,8 +50,6 @@ public class JwtUtils {
             log.error("Token JWT no soportado: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
             log.error("La cadena de claims JWT está vacía: {}", e.getMessage());
-        } catch (SignatureException e) {
-            log.error("Firma del JWT no válida: {}", e.getMessage());
         }
         return false;
     }
