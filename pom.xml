@@ -115,10 +115,11 @@
                 <configuration>
                     <excludes>
                         <exclude>**/com/videogamemanager/videogamemanager/models/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/model/dto/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/mapper/**</exclude>
                         <exclude>**/com/videogamemanager/videogamemanager/configuration/**</exclude>
                         <exclude>**/com/videogamemanager/videogamemanager/exceptions/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/mapper/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/utils/**</exclude>
+                        <exclude>**/com/videogamemanager/videogamemanager/VideogamemanagerApplication.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
