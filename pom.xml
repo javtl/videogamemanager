@@ -114,12 +114,13 @@
                 <version>0.8.11</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/com/videogamemanager/videogamemanager/models/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/configuration/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/exceptions/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/mapper/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/utils/**</exclude>
-                        <exclude>**/com/videogamemanager/videogamemanager/VideogamemanagerApplication.class</exclude>
+                        <exclude>**/models/**</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/mapper/**</exclude>
+                        <exclude>**/configuration/**</exclude>
+                        <exclude>**/exceptions/**</exclude>
+                        <exclude>**/utils/**</exclude>
+                        <exclude>**/*Application.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
