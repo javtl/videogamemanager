@@ -1,6 +1,5 @@
 package com.videogamemanager.videogamemanager.security;
 
-import com.videogamemanager.videogamemanager.models.User;
 import com.videogamemanager.videogamemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

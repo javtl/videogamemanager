@@ -1,5 +1,6 @@
 package com.videogamemanager.videogamemanager.security;
 
+import com.videogamemanager.videogamemanager.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor // Importante para inyectar el filtro
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
@@ -24,14 +26,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         // Usamos hasAuthority para evitar líos con el prefijo ROLE_ del Enum
-                        .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/games/stats").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/games/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasAuthority(AppConstants.ROLE_ADMIN)
+                        .requestMatchers("/api/games/stats").hasAuthority(AppConstants.ROLE_ADMIN)
+                        .requestMatchers("/api/games/**").hasAnyAuthority(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
