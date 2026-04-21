@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Usamos hasAuthority para evitar líos con el prefijo ROLE_ del Enum
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasAuthority(AppConstants.ROLE_ADMIN)
                         .requestMatchers("/api/games/stats").hasAuthority(AppConstants.ROLE_ADMIN)
                         .requestMatchers("/api/games/**").hasAnyAuthority(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN)
