@@ -1,9 +1,12 @@
 package com.videogamemanager.videogamemanager.mapper;
 
 import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameAdminDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
 
 /**
  * Componente de mapeo encargado de la transformación de datos entre la capa
@@ -21,6 +24,12 @@ public interface GameMapper {
      * @return El objeto {@link GameDto} con la información procesada para la API.
      */
     GameDto toDTO(Game game);
+
+    Game toAdminEntity(GameAdminDto gameAdminDto);
+
+    GameAdminDto toAdminDTO(Game game);
+
+    List<GameAdminDto> toListDTO(List<Game> game);
 
     /**
      * Transforma un DTO recibido en una entidad de base de datos.

@@ -3,6 +3,7 @@ package com.videogamemanager.videogamemanager.services.impl;
 import com.videogamemanager.videogamemanager.exceptions.InvalidGameException;
 import com.videogamemanager.videogamemanager.mapper.GameMapper;
 import com.videogamemanager.videogamemanager.models.Game;
+import com.videogamemanager.videogamemanager.models.dto.GameAdminDto;
 import com.videogamemanager.videogamemanager.models.dto.GameDto;
 import com.videogamemanager.videogamemanager.models.dto.GameStatsDto;
 import com.videogamemanager.videogamemanager.repository.GameRepository;
@@ -120,6 +121,23 @@ public class GameServiceImpl implements GameService {
         game.setActive(false);
 
         repository.save(game);
+    }
+
+    @Override
+    public List<GameAdminDto> findAllForExport(GameAdminDto filter){
+
+        Game gameEntity = mapper.toAdminEntity(filter);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Game> example = Example.of(gameEntity, matcher);
+
+        List<Game> games = repository.findAll(example);
+
+        return mapper.toListDTO(games);
     }
 }
 

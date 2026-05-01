@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasAuthority(AppConstants.ROLE_ADMIN)
                         .requestMatchers("/api/games/stats").hasAuthority(AppConstants.ROLE_ADMIN)
                         .requestMatchers("/api/games/**").hasAnyAuthority(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN)
+                        .requestMatchers("/api/export/**").hasAuthority(AppConstants.ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
