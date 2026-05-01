@@ -124,18 +124,22 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<GameAdminDto> findAllForExport(GameAdminDto filter){
+    public List<GameAdminDto> findAllForExport(GameAdminDto filter) {
+        List<Game> games;
 
-        Game gameEntity = mapper.toAdminEntity(filter);
+        // Si el filtro es nulo o está vacío (todos sus campos son null), traemos todo
+        if (filter == null || (filter.getTitle() == null && filter.getGenre() == null && filter.getReleaseYear() == null)) {
+            games = repository.findAll();
+        } else {
+            Game gameEntity = mapper.toAdminEntity(filter);
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withIgnoreNullValues()
+                    .withIgnoreCase()
+                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withIgnoreNullValues()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
-        Example<Game> example = Example.of(gameEntity, matcher);
-
-        List<Game> games = repository.findAll(example);
+            Example<Game> example = Example.of(gameEntity, matcher);
+            games = repository.findAll(example);
+        }
 
         return mapper.toListDTO(games);
     }

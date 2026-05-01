@@ -27,8 +27,8 @@ public class ExportServiceImpl implements ExportService {
                     .append(escapeCsv(game.getGenre())).append(",")
                     .append(game.getReleaseYear()).append(",")
                     .append(game.getAge()).append(",")
-                    .append(game.isCompleted() ? "SÍ" : "NO").append(",")
-                    .append(game.isActive() ? "SÍ" : "NO").append(",")
+                    .append(game.getCompleted() ? "SÍ" : "NO").append(",")
+                    .append(game.getActive() ? "SÍ" : "NO").append(",")
                     .append(game.getCreatedAt() != null ? game.getCreatedAt().format(formatter) : "").append(",")
                     .append(game.getUpdatedAt() != null ? game.getUpdatedAt().format(formatter) : "")
                     .append("\n");

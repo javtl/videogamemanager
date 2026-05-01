@@ -17,9 +17,9 @@ public class Game {
     private String id;
     private String title;
     private String genre;
-    private int releaseYear;
+    private Integer releaseYear;
     private Integer age;
-    private boolean completed;
+    private Boolean completed;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -27,5 +27,5 @@ public class Game {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private boolean active = true;
+    private Boolean active = true;
 }

@@ -14,10 +14,10 @@ public class GameAdminDto {
     private String id; // El ID de MongoDB que el Admin necesita
     private String title;
     private String genre;
-    private int releaseYear;
+    private Integer releaseYear;
     private Integer age;
-    private boolean completed;
-    private boolean active;
+    private Boolean completed;
+    private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
